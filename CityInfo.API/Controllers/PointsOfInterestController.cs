@@ -18,16 +18,25 @@ public class PointsOfInterestController : ControllerBase
     [HttpGet]
     public ActionResult<IEnumerable<PointOfInterestDto>> GetPointsOfInterest(int cityId)
     {
-        var city = CitiesDataStore.Current.Cities.FirstOrDefault(city => city.Id == cityId);
-
-        if (city == null)
+        try
         {
-            logger.LogInformation($"City with {cityId} was not found when accessing points of interest.");
+            var city = CitiesDataStore.Current.Cities.FirstOrDefault(city => city.Id == cityId);
 
-            return NotFound();
+            if (city == null)
+            {
+                logger.LogInformation($"City with {cityId} was not found when accessing points of interest.");
+
+                return NotFound();
+            }
+
+            return Ok(city.PointsOfInterest);
         }
+        catch (Exception ex)
+        {
+            logger.LogCritical($"Exception while getting points of interest for city with id {cityId}", ex);
 
-        return Ok(city.PointsOfInterest);
+            return StatusCode(500, "A problem happened while handling your request.");
+        }
     }
 
     [HttpGet("{pointofinterestid}", Name = "GetPointOfInterest")]
@@ -73,7 +82,7 @@ public class PointsOfInterestController : ControllerBase
 
         city.PointsOfInterest.Add(finalPointOfInterest);
 
-        return CreatedAtRoute("GetPointOfInterest", new { cityId = cityId, pointOfInterestId = finalPointOfInterest.Id}, finalPointOfInterest);
+        return CreatedAtRoute("GetPointOfInterest", new { cityId = cityId, pointOfInterestId = finalPointOfInterest.Id }, finalPointOfInterest);
     }
 
     [HttpPut("{pointofinterestid}")]
