@@ -10,12 +10,12 @@ namespace CityInfo.API.Controllers;
 public class PointsOfInterestController : ControllerBase
 {
     private readonly ILogger<PointsOfInterestController> logger;
-    private readonly LocalMailService localMailService;
+    private readonly IMailService mailService;
 
-    public PointsOfInterestController(ILogger<PointsOfInterestController> logger, LocalMailService localMailService)
+    public PointsOfInterestController(ILogger<PointsOfInterestController> logger, IMailService mailService)
     {
         this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
-        this.localMailService = localMailService ?? throw new ArgumentNullException(nameof(logger));
+        this.mailService = mailService ?? throw new ArgumentNullException(nameof(logger));
     }
 
     [HttpGet]
@@ -166,7 +166,7 @@ public class PointsOfInterestController : ControllerBase
 
         city.PointsOfInterest.Remove(pointOfInterestFromStore);
 
-        localMailService.Send("Point of interst deleted.", $"Name: {pointOfInterestFromStore.Name}, ID: {pointOfInterestFromStore.Id}");
+        mailService.Send("Point of interst deleted.", $"Name: {pointOfInterestFromStore.Name}, ID: {pointOfInterestFromStore.Id}");
 
         return NoContent();
     }
