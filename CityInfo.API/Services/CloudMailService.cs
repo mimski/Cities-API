@@ -2,8 +2,14 @@
 
 public class CloudMailService : IMailService
 {
-    private string mailTo = "admin@mycompany.com";
-    private string mailFrom = "noreply@mycompany.com";
+    private string mailTo = string.Empty;
+    private string mailFrom = string.Empty;
+
+    public CloudMailService(IConfiguration configuration)
+    {
+        mailTo = configuration["mailSettings:mailToAddress"];
+        mailFrom = configuration["mailSettings:mailFromAddress"];
+    }
 
     public void Send(string subject, string message)
     {
