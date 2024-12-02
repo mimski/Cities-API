@@ -4,5 +4,5 @@ public interface ICityInfoRepository
 {
     Task<IEnumerable<City>> GetCitiesAsync();
 
-    Task<City?> GetCityAsync();
+    Task<City?> GetCityAsync(int cityId);
 }
