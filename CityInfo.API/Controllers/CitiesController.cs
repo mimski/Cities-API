@@ -1,4 +1,5 @@
-﻿using CityInfo.API.Models;
+﻿using AutoMapper;
+using CityInfo.API.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CityInfo.API.Controllers;
@@ -8,10 +9,12 @@ namespace CityInfo.API.Controllers;
 public class CitiesController : ControllerBase
 {
     private readonly ICityInfoRepository cityInfoRepository;
+    private readonly IMapper mapper;
 
-    public CitiesController(ICityInfoRepository cityInfoRepository)
+    public CitiesController(ICityInfoRepository cityInfoRepository, IMapper mapper)
     {
         this.cityInfoRepository = cityInfoRepository ?? throw new ArgumentNullException(nameof(cityInfoRepository));
+        this.mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
     }
 
     [HttpGet]
@@ -19,19 +22,7 @@ public class CitiesController : ControllerBase
     {
         var cityEntities = await this.cityInfoRepository.GetCitiesAsync();
 
-        var results = new List<CityWithoutPointsOfInterestDto>();
-
-        foreach (var cityEntity in cityEntities)
-        {
-            results.Add(new CityWithoutPointsOfInterestDto 
-            {
-                Id = cityEntity.Id,
-                Name = cityEntity.Name,
-                Description = cityEntity.Description
-            });
-        }
-        
-        return Ok(results);
+        return Ok(this.mapper.Map<IEnumerable<CityWithoutPointsOfInterestDto>>(cityEntities));
     }
 
     //[HttpGet("{id}")]
