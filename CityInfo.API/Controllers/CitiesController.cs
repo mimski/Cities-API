@@ -25,16 +25,21 @@ public class CitiesController : ControllerBase
         return Ok(this.mapper.Map<IEnumerable<CityWithoutPointsOfInterestDto>>(cityEntities));
     }
 
-    //[HttpGet("{id}")]
-    //public ActionResult<CityDto> GetCity(int id) 
-    //{
-    //    var city = citiesDataStore.Cities.FirstOrDefault(city => city.Id == id);
+    [HttpGet("{id}")]
+    public async Task<ActionResult<CityDto>> GetCity(int id, bool includePointsOfInterest = false)
+    {
+        var city = await this.cityInfoRepository.GetCityAsync(id, includePointsOfInterest);
 
-    //    if (city == null)
-    //    {
-    //        return NotFound();
-    //    }
+        if (city == null)
+        {
+            return NotFound();
+        }
 
-    //    return Ok(city);
-    //}
+        if (includePointsOfInterest) 
+        { 
+            return Ok(this.mapper.Map<CityDto>(city));
+        }
+
+        return Ok(city);
+    }
 }
