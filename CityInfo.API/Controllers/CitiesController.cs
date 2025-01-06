@@ -26,7 +26,7 @@ public class CitiesController : ControllerBase
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<CityDto>> GetCity(int id, bool includePointsOfInterest = false)
+    public async Task<IActionResult> GetCity(int id, bool includePointsOfInterest = false)
     {
         var city = await this.cityInfoRepository.GetCityAsync(id, includePointsOfInterest);
 
