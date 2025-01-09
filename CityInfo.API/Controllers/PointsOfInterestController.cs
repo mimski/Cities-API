@@ -58,31 +58,23 @@ public class PointsOfInterestController : ControllerBase
         return Ok(this.mapper.Map<PointOfInterestDto>(pointOfInterest));
     }
 
-    //[HttpPost]
-    //public ActionResult<PointOfInterestDto> CreatePointOfInterest(int cityId, PointOfInterestForCreationDto pointOfInterest)
-    //{
-    //    var city = citiesDataStore.Cities.FirstOrDefault(city => city.Id == cityId);
+    [HttpPost]
+    public async Task<ActionResult<PointOfInterestDto>> CreatePointOfInterest(int cityId, PointOfInterestForCreationDto pointOfInterest)
+    {
+        if (!await this.cityInfoRepository.CityExistsAsync(cityId))
+        {
+            return NotFound();
+        }
 
-    //    if (city == null)
-    //    {
-    //        return NotFound();
-    //    }
+        var finalPointOfInterest = this.mapper.Map<Entities.PointOfInterest>(pointOfInterest);
 
-    //    // concept code
-    //    var maxPointOfInterestId = citiesDataStore.Cities.SelectMany(city => city.PointsOfInterest)
-    //                                                             .Max(point => point.Id);
+        await this.cityInfoRepository.AddPointOfInterestForCityAsync(cityId, finalPointOfInterest);
+        await this.cityInfoRepository.SaveChangesAsync();
 
-    //    var finalPointOfInterest = new PointOfInterestDto
-    //    {
-    //        Id = ++maxPointOfInterestId,
-    //        Name = pointOfInterest.Name,
-    //        Description = pointOfInterest.Description,
-    //    };
+        var createPointOfInterestToReturn = this.mapper.Map<Models.PointOfInterestDto>(finalPointOfInterest);
 
-    //    city.PointsOfInterest.Add(finalPointOfInterest);
-
-    //    return CreatedAtRoute("GetPointOfInterest", new { cityId = cityId, pointOfInterestId = finalPointOfInterest.Id }, finalPointOfInterest);
-    //}
+        return CreatedAtRoute("GetPointOfInterest", new { cityId = cityId, pointOfInterestId = createPointOfInterestToReturn.Id }, createPointOfInterestToReturn);
+    }
 
     //[HttpPut("{pointofinterestid}")]
     //public ActionResult UpdatePointOfInterest(int cityId, int pointOfInterestId, PointOfInterestForUpdateDto pointOfInterest)
