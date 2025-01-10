@@ -76,28 +76,27 @@ public class PointsOfInterestController : ControllerBase
         return CreatedAtRoute("GetPointOfInterest", new { cityId = cityId, pointOfInterestId = createPointOfInterestToReturn.Id }, createPointOfInterestToReturn);
     }
 
-    //[HttpPut("{pointofinterestid}")]
-    //public ActionResult UpdatePointOfInterest(int cityId, int pointOfInterestId, PointOfInterestForUpdateDto pointOfInterest)
-    //{
-    //    var city = citiesDataStore.Cities.FirstOrDefault(city => city.Id == cityId);
+    [HttpPut("{pointofinterestid}")]
+    public async Task<ActionResult> UpdatePointOfInterest(int cityId, int pointOfInterestId, PointOfInterestForUpdateDto pointOfInterest)
+    {
+        if (!await this.cityInfoRepository.CityExistsAsync(cityId))
+        {
+            return NotFound();
+        }
 
-    //    if (city == null)
-    //    {
-    //        return NotFound();
-    //    }
+        var pointOfInterestEntity = await this.cityInfoRepository.GetPointOfInterestsForCityAsync(cityId, pointOfInterestId);
 
-    //    var pointOfInterestFromStore = city.PointsOfInterest.FirstOrDefault(city => city.Id == pointOfInterestId);
+        if (pointOfInterestEntity == null)
+        {  
+            return NotFound(); 
+        }
 
-    //    if (pointOfInterestFromStore == null)
-    //    {
-    //        return NotFound();
-    //    }
+        this.mapper.Map(pointOfInterest, pointOfInterestEntity);
 
-    //    pointOfInterestFromStore.Name = pointOfInterest.Name;
-    //    pointOfInterestFromStore.Description = pointOfInterest.Description;
+        await this.cityInfoRepository.SaveChangesAsync();
 
-    //    return NoContent();
-    //}
+        return NoContent();
+    }
 
     //[HttpPatch("{pointofinterestid}")]
     //public ActionResult PartiallyUpdatePointOfInterest(int cityId, int pointOfInterestId, JsonPatchDocument<PointOfInterestForUpdateDto> patchDocument)
