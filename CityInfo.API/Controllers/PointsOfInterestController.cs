@@ -98,41 +98,40 @@ public class PointsOfInterestController : ControllerBase
         return NoContent();
     }
 
-    //[HttpPatch("{pointofinterestid}")]
-    //public ActionResult PartiallyUpdatePointOfInterest(int cityId, int pointOfInterestId, JsonPatchDocument<PointOfInterestForUpdateDto> patchDocument)
-    //{
-    //    var city = citiesDataStore.Cities.FirstOrDefault(city => city.Id == cityId);
+    [HttpPatch("{pointofinterestid}")]
+    public async Task<ActionResult> PartiallyUpdatePointOfInterest(int cityId, int pointOfInterestId, JsonPatchDocument<PointOfInterestForUpdateDto> patchDocument)
+    {
+        if (!await this.cityInfoRepository.CityExistsAsync(cityId))
+        {
+            return NotFound();
+        }
 
-    //    if (city == null)
-    //    {
-    //        return NotFound();
-    //    }
+        var pointOfInterestEntity =  await this.cityInfoRepository.GetPointOfInterestsForCityAsync(cityId, pointOfInterestId);
 
-    //    var pointOfInterestFromStore = city.PointsOfInterest.FirstOrDefault(city => city.Id == pointOfInterestId);
+        if (pointOfInterestEntity == null)
+        {
+            return NotFound();
+        }
 
-    //    if (pointOfInterestFromStore == null)
-    //    {
-    //        return NotFound();
-    //    }
+        var pointOfInterestToPatch = this.mapper.Map<PointOfInterestForUpdateDto>(pointOfInterestEntity);
+       
+        patchDocument.ApplyTo(pointOfInterestToPatch, ModelState);
 
-    //    var pointOfInterestToPatch = new PointOfInterestForUpdateDto
-    //    {
-    //        Name = pointOfInterestFromStore.Name,
-    //        Description = pointOfInterestFromStore.Description,
-    //    };
+        if (!ModelState.IsValid)
+        {
+            return BadRequest();
+        }
 
-    //    patchDocument.ApplyTo(pointOfInterestToPatch, ModelState);
+        if (!TryValidateModel(pointOfInterestToPatch))
+        { 
+            return BadRequest(ModelState);
+        }
 
-    //    if (!ModelState.IsValid)
-    //    {
-    //        return BadRequest();
-    //    }
+        this.mapper.Map(pointOfInterestToPatch, pointOfInterestEntity);
+        await this.cityInfoRepository.SaveChangesAsync();
 
-    //    pointOfInterestFromStore.Name = pointOfInterestToPatch.Name;
-    //    pointOfInterestFromStore.Description = pointOfInterestToPatch.Description;
-
-    //    return NoContent();
-    //}
+        return NoContent();
+    }
 
     //[HttpDelete("{pointOfInterestId}")]
     //public ActionResult DeletePointOfInterest(int cityId, int pointOfInterestId)
