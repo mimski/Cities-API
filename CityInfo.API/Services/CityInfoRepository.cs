@@ -59,6 +59,11 @@ public class CityInfoRepository : ICityInfoRepository
         }
     }
 
+    public void DeletePointOfInterest(PointOfInterest pointOfInterest)
+    {
+        this.cityInfoContext.Remove(pointOfInterest);
+    }
+
     public async Task<bool> SaveChangesAsync()
     {
         return (await this.cityInfoContext.SaveChangesAsync() >= 0);
