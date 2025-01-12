@@ -19,6 +19,20 @@ public class CityInfoRepository : ICityInfoRepository
                                                 .ToListAsync();
     }
 
+    public async Task<IEnumerable<City>> GetCitiesAsync(string? name)
+    {
+        if(string.IsNullOrEmpty(name))
+        {
+            return await this.GetCitiesAsync();
+        }
+
+        name = name.Trim();
+
+        return await this.cityInfoContext.Cities.Where(city => city.Name == name)
+                                                .OrderBy(city => city.Name)
+                                                .ToListAsync();
+    }
+
     public async Task<City?> GetCityAsync(int cityId, bool includePointOfInterest)
     {
         if (includePointOfInterest)

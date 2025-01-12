@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using CityInfo.API.Models;
 using CityInfo.API.Services;
-using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 
@@ -87,8 +86,8 @@ public class PointsOfInterestController : ControllerBase
         var pointOfInterestEntity = await this.cityInfoRepository.GetPointOfInterestsForCityAsync(cityId, pointOfInterestId);
 
         if (pointOfInterestEntity == null)
-        {  
-            return NotFound(); 
+        {
+            return NotFound();
         }
 
         this.mapper.Map(pointOfInterest, pointOfInterestEntity);
@@ -106,7 +105,7 @@ public class PointsOfInterestController : ControllerBase
             return NotFound();
         }
 
-        var pointOfInterestEntity =  await this.cityInfoRepository.GetPointOfInterestsForCityAsync(cityId, pointOfInterestId);
+        var pointOfInterestEntity = await this.cityInfoRepository.GetPointOfInterestsForCityAsync(cityId, pointOfInterestId);
 
         if (pointOfInterestEntity == null)
         {
@@ -114,7 +113,7 @@ public class PointsOfInterestController : ControllerBase
         }
 
         var pointOfInterestToPatch = this.mapper.Map<PointOfInterestForUpdateDto>(pointOfInterestEntity);
-       
+
         patchDocument.ApplyTo(pointOfInterestToPatch, ModelState);
 
         if (!ModelState.IsValid)
@@ -123,7 +122,7 @@ public class PointsOfInterestController : ControllerBase
         }
 
         if (!TryValidateModel(pointOfInterestToPatch))
-        { 
+        {
             return BadRequest(ModelState);
         }
 

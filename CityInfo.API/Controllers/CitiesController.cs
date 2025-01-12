@@ -18,9 +18,9 @@ public class CitiesController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<CityWithoutPointsOfInterestDto>>> GetCities() 
+    public async Task<ActionResult<IEnumerable<CityWithoutPointsOfInterestDto>>> GetCities(string? name) 
     {
-        var cityEntities = await this.cityInfoRepository.GetCitiesAsync();
+        var cityEntities = await this.cityInfoRepository.GetCitiesAsync(name);
 
         return Ok(this.mapper.Map<IEnumerable<CityWithoutPointsOfInterestDto>>(cityEntities));
     }
