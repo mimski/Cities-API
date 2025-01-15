@@ -19,7 +19,7 @@ public class CityInfoRepository : ICityInfoRepository
                                                 .ToListAsync();
     }
 
-    public async Task<IEnumerable<City>> GetCitiesAsync(string? name, string? searchQuery)
+    public async Task<IEnumerable<City>> GetCitiesAsync(string? name, string? searchQuery, int pageNumber, int pageSize)
     {
         if(string.IsNullOrEmpty(name) && string.IsNullOrWhiteSpace(searchQuery))
         {
@@ -41,6 +41,8 @@ public class CityInfoRepository : ICityInfoRepository
         }
 
         return await collection.OrderBy(city => city.Name)
+                               .Skip(pageSize * (pageNumber - 1))
+                               .Take(pageSize)
                                .ToListAsync();
     }
 
