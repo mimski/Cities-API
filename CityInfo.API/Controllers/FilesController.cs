@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Asp.Versioning;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.StaticFiles;
 
@@ -16,6 +17,8 @@ public class FilesController : ControllerBase
         this.fileExtensionContentTypeProvider = fileExtensionContentTypeProvider ?? throw new ArgumentException(nameof(fileExtensionContentTypeProvider));
     }
 
+    [HttpGet("{fileId}")]
+    [ApiVersion(0.1, Deprecated = true)]
     public ActionResult GetFile(string fileId)
     {
         //concept code
