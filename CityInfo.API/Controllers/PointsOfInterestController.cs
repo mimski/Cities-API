@@ -29,6 +29,14 @@ public class PointsOfInterestController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<IEnumerable<PointOfInterestDto>>> GetPointsOfInterest(int cityId)
     {
+        // for demo purpose: we are looking for city claim. It would have been better if we have an ID istead of city name, but for demo purposes this will do
+        var cityName = User.Claims.FirstOrDefault(city => city.Type == "city")?.Value;
+
+        if (!await this.cityInfoRepository.CityNameMatchesCityId(cityName, cityId))
+        {
+            return Forbid();
+        }
+
         if (!await this.cityInfoRepository.CityExistsAsync(cityId))
         {
             this.logger.LogInformation($"City with id {cityId} was not found when accessing points of interest.");
