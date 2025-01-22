@@ -45,7 +45,11 @@ public class CitiesController : ControllerBase
     /// <param name="id">The id of the city to get.</param>
     /// <param name="includePointsOfInterest">Whether or not to include the points of interest.</param>
     /// <returns>A city with or without point of interest.</returns>
+    /// <response code="200">Returns the requsted city.</response>
     [HttpGet("{id}")]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<IActionResult> GetCity(int id, bool includePointsOfInterest = false)
     {
         var city = await this.cityInfoRepository.GetCityAsync(id, includePointsOfInterest);
