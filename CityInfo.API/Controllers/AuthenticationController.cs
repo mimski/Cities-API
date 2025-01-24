@@ -14,7 +14,7 @@ public class AuthenticationController : ControllerBase
 
     public AuthenticationController(IConfiguration configuration)
     {
-        this.configuration = configuration;
+        this.configuration = configuration ?? throw new ArgumentException(nameof(configuration));
     }
 
     [HttpPost("authenticate")]
@@ -22,8 +22,8 @@ public class AuthenticationController : ControllerBase
     {
         var user = ValidateUserCredentials(authenticationRequestBody.UserName, authenticationRequestBody.Password);
 
-        if (user == null) 
-        { 
+        if (user == null)
+        {
             return Unauthorized();
         }
 
@@ -48,7 +48,7 @@ public class AuthenticationController : ControllerBase
         return Ok(tokenToReturn);
     }
 
-    private CityInfoUser ValidateUserCredentials(string? userName, string? password) 
+    private CityInfoUser ValidateUserCredentials(string? userName, string? password)
     {
         // we do not have a user DB or table. For demo purpose, we asume the creds are valid
         return new CityInfoUser(1, userName ?? "", "Joe", "Doe", "UK");
