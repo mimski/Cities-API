@@ -18,3 +18,13 @@ Content-Type: application/json
   "name": "A name for testing",
   "description": "A description for testing"
 }
+
+###
+// get a token
+POST {{schema}}://{{hostname}}:{{port}}/api/authentication/authenticate
+Content-Type: application/json
+
+{
+  "username": "KevinDockx",
+  "password": "This is a relatively long sentence that acts as my password"
+}
